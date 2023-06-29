@@ -1,0 +1,116 @@
+#include <iostream>
+#include <string>
+#include <locale>
+using namespace std;
+
+string digitToWord(int digit) {
+    string words[] = { "ноль", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"};
+    return words[digit];
+}
+
+string numberToWords(int number) {
+    string result = "";
+    if (number == 0) {
+        return digitToWord(number);
+    }
+    if (number < 0) {
+        result += "минус ";
+        number = -number;
+    }
+    int powers[] = { 1000000000, 1000000, 1000, 100 };//Степни десяти.
+    string powerWords[] = { "миллиардов", "миллионов", "тысяч", "сот" };//Степни десяти в словах.
+    for (int i = 0; i < 4; i++) {
+        int power = powers[i];
+        if (number >= power) {
+            int quotient = number / power;
+            
+            if (i == 3 && quotient == 1)
+                result += "сто ";
+            else if (i == 3 && quotient == 2)
+                result += "двести ";
+            else if (i == 3 && quotient == 3)
+                result += "триста ";
+            else if (i == 3 && quotient == 4)
+                result += "четыреста ";
+            else if (i == 3 && quotient > 4)
+                result += numberToWords(quotient) + powerWords[i] + " ";
+
+            if (i == 2 && quotient % 10 == 1 && quotient / 10 == 0)
+                result += " одна тысяча ";
+            else if (i == 2 && quotient % 10 == 1)
+                result += numberToWords(quotient - 1) + " одна тысяча ";
+
+            else if (i == 2 && quotient % 10 == 2 && quotient / 10 == 0)
+                result += " две тысячи ";
+            else if (i == 2 && quotient % 10 == 2)
+                result += numberToWords(quotient - 2) + "две тысячи ";
+            
+            else if (i == 2 && quotient % 10 == 3 && quotient / 10 == 0)
+                result += " три тысячи ";
+            else if (i == 2 && quotient % 10 == 3)
+                result += numberToWords(quotient - 3) + "три тысячи ";
+            
+            else if (i == 2 && quotient % 10 == 4 && quotient / 10 == 0)
+                result += " четыре тысячи ";
+            else if (i == 2 && quotient % 10 == 4)
+                result += numberToWords(quotient - 4) + "четыре тысячи ";
+            
+            else if (i == 2 && quotient > 4)
+                result += numberToWords(quotient) + " " + powerWords[i] + " ";
+
+            if (i == 1 && quotient % 10 == 1)
+                result += numberToWords(quotient - 1) + "один миллион ";
+            else if (i == 1 && quotient % 10 == 2)
+                result += numberToWords(quotient - 2) + "два миллиона ";
+            else if (i == 1 && quotient % 10 == 3)
+                result += numberToWords(quotient - 3) + "три миллиона ";
+            else if (i == 1 && quotient % 10 == 4)
+                result += numberToWords(quotient - 4) + "четыре миллиона ";
+            else if (i == 1 && quotient > 4)
+                result += numberToWords(quotient) + " " + powerWords[i] + " ";
+
+            if (i == 0 && quotient % 10 == 1)
+                result += numberToWords(quotient - 1) + "один миллиард ";
+            else if (i == 0 && quotient % 10 == 2)
+                result += numberToWords(quotient - 2) + "два миллиарда ";
+            else if (i == 0 && quotient % 10 == 3)
+                result += numberToWords(quotient - 3) + "три миллиарда ";
+            else if (i == 0 && quotient % 10 == 4)
+                result += numberToWords(quotient - 4) + "четыре миллиарда ";
+            else if (i == 0 && quotient > 4)
+                result += numberToWords(quotient) + " " + powerWords[i] + " ";
+            number %= power;
+        }
+    }
+    if (number > 0) {
+        /*if (result != "") {
+            result += "и ";
+        }*/
+        if (number < 10) {
+            result += digitToWord(number);
+        }
+        else if (number < 20) {
+            string teenWords[] = { "десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать" };
+            result += teenWords[number - 10];
+        }
+        else {
+            string tensWords[] = { "", "", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто" };
+            int tens = number / 10;
+            result += tensWords[tens] + " ";
+            number %= 10;
+            if (number > 0) {
+                result += digitToWord(number);
+            }
+        }
+    }
+    return result;
+}
+
+int main() {
+    setlocale(LC_ALL, "RUSSIAN");
+    int number;
+    cout << "Введите число: ";
+    cin >> number;
+    cout << numberToWords(number) << " руб." << endl;
+    return 0;
+}
